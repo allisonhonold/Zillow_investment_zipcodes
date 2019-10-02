@@ -51,22 +51,6 @@ def calc_roi (initial_price, projected_price):
     return (projected_price - initial_price) / initial_price
 
 
-
-
-def plot_model(df, zipcode):
-    """
-    Takes a data frame and zipcode to create a plot showing average housing
-    prices and forcasted prices from April 2005 to April 20018
-    """
-
-    model, forecast, zipcode = model_price(df, zipcode, '2005-04-01', '2018-04-01')
-    model.plot(forecast, uncertainty=True)
-    plt.title(zipcode)
-    plt.show()
-
-
-
-
 def melt_data(df):
     """
     Transposes a data frame from wide to long and groups by time
@@ -119,3 +103,47 @@ def model_extract_all(all_df):
         stats_df = extract_stats(forecast, zipcode, stats_df)
         print(index)
     return stats_df
+
+def create_zip_df(df, zipcode, start, end):
+    df = melt_data(df.loc[df['RegionName'] == zipcode])
+    df = df.reset_index()
+    df.columns = ['ds', 'y']
+    data_df = df.loc[(df['ds'] > start) & (df['ds'] < end)]
+    return data_df
+
+def plot_models(df, stats_df, zipcodes, title):
+    """
+    Plots one or multiple models on a single axis. 
+    
+    Args: 
+        df: a data frame with columns [RegionID, RegionName, City, State, Metro,
+        CountyName, SizeRank, 1996-04, 1996-05, 1996-06... 2018-02, 2018-03, 2018-04]
+        stats_df: a data frame with columns [zipcode, 2018-04-01, minimum, min_roi, 
+        expected, expected_roi, maximum, max_roi]
+        zipcode: zipcode
+    Returns:
+        figure with the data from the zipcodes plotted
+    """
+    palette = plt.get_cmap('Dark2')
+    fig, ax = plt.subplots(figsize=(15,8))
+    for index, zipcode in enumerate(zipcodes):
+        color = palette(index)
+        zip_history_df = create_zip_df(df, zipcode, '2005-04-01', '2018-04-01')
+        model, forecast, zipcode = model_price(df, zipcode,
+                                    '2005-04-01', '2018-04-01')
+        zip_data = df.loc[df['RegionName'] == zipcode]
+        stats_data = stats_df.loc[stats_df['zipcode'] == zipcode]
+        label = (f"{zip_data['City'].values[0]}"
+                 + f", {zip_data['State'].values[0]}"
+                )
+        ax.plot(zip_history_df['ds'], zip_history_df['y'], color='k', alpha=0.5)
+        ax.plot_date(forecast['ds'], forecast['yhat'], color=color, alpha=.75,
+                            label=label) #plot forecast
+        ax.fill_between(forecast['ds'], forecast['yhat_lower'],
+                        forecast['yhat_upper'],
+                       color=color, alpha=.25) #plot forecast range
+    fig.suptitle(f'Recommended Zipcodes for Real Estate Investment: {title}')
+    ax.legend(loc='upper left')
+    ax.set_ylabel('price')
+    ax.set_xlabel('year')
+    fig.show();
