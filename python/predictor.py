@@ -37,11 +37,13 @@ def extract_stats(forecast, zipcode, df):
 
 
 def calc_roi (initial_price, projected_price):
-    """Calculates average ROI for a zipcode using the initial 
-    price and projected price.
+    """Calculates average ROI for a zipcode. Does not account for inflation.
 
     Args:
+        initial_price: initial price
+        projected_price: future price
     Returns:
+        Return on investment as a float
     """
 
     return (projected_price - initial_price) / initial_price
@@ -51,7 +53,9 @@ def melt_data(df):
     """Transposes a data frame from wide to long and groups by time
 
     Args:
+        df: a wide dataframe
     Returns:
+        a long dataframe
     """
 
     melted = pd.melt(df, id_vars=['RegionName', 'RegionID', 'City', 'State',
@@ -195,8 +199,6 @@ def plot_model_vs_real(zip_forecasts, true_vals, date):
             {zipcode: {history: history_df, forecast: forecast_df}}
         true_vals: a data frame with columns zipcode, price
         date: date for forecasting in format YYYY-MM-01
-    
-    Returns:
     """
     _, ax = plt.subplots()
     for zip_forecast in zip_forecasts:
