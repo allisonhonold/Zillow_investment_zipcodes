@@ -1,5 +1,9 @@
 # Zillow Property Projections
 
+Executive Summary Link:
+https://docs.google.com/presentation/d/1-nV-j2k5Yz3nC25ZQtRjjPZs5H9kdxC8WyXeFlPra8A/edit?usp=sharing
+
+
 This project investegates the 5 "best" zipcodes to invest in property 
 in the US using a consultative and timeseries modeling approach.
 
