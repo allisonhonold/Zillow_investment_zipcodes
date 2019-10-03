@@ -2,18 +2,13 @@
 import pandas as pd
 import matplotlib
 from matplotlib import pyplot as plt
-# from sklearn import metrics -- don't need
-# import math    -- testing to see if we need this
-# import seaborn as sns    -- testing to see if we need this
-# from matplotlib.pylab import rcParams    -- not using
 plt.style.use('fivethirtyeight')
 from fbprophet import Prophet
-# import numpy as np -- don't need
+
 
 
 def extract_stats(forecast, zipcode, df):
-    """
-    Adds pertinent statistics from zipcode's forecast at 60 months (2023-04-01) 
+    """Adds pertinent statistics from zipcode's forecast at 60 months (2023-04-01) 
     to the passed datafame.
     
     Args:
@@ -42,17 +37,21 @@ def extract_stats(forecast, zipcode, df):
 
 
 def calc_roi (initial_price, projected_price):
-    """
-    Calculates average ROI for a zipcode using the initial 
+    """Calculates average ROI for a zipcode using the initial 
     price and projected price.
+
+    Args:
+    Returns:
     """
 
     return (projected_price - initial_price) / initial_price
 
 
 def melt_data(df):
-    """
-    Transposes a data frame from wide to long and groups by time
+    """Transposes a data frame from wide to long and groups by time
+
+    Args:
+    Returns:
     """
 
     melted = pd.melt(df, id_vars=['RegionName', 'RegionID', 'City', 'State',
